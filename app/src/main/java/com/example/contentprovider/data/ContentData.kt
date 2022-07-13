@@ -26,6 +26,10 @@ class ContentData {
         }
     }
 
+    fun deleteContent(arg: Array<out String>?): Boolean {
+        return if (arg!= null){contentList.removeAll(arg)} else false // we have only one column so no need to use selection
+    }
+
     init {
         for (i in 0..5){
             contentList.add("content $i")

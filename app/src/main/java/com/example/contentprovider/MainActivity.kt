@@ -5,18 +5,15 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -83,9 +80,25 @@ class MainActivity : ComponentActivity() {
                     ) {
                         LazyColumn{
                             items(contentItems){item : String ->
-                                Text(text = item , modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(all = 10.dp))
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(all = 10.dp)
+                                ) {
+                                    Text(
+                                        text = item ,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                    )
+                                    IconButton(onClick = {
+                                        val code = contentResolver.delete(CONTENT_URI, CONTENT_ITEM_COLUMN, arrayOf(item))
+                                        Toast.makeText(applicationContext,if(code==1)"Delete Success,Load Again" else "Delete Fail , Retry",Toast.LENGTH_LONG).show()
+                                    }) {
+                                        Icon(imageVector = Icons.Default.Delete, contentDescription ="Delete" )
+                                    }
+
+                                }
+
                             }
                         }
                     }
