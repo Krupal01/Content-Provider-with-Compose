@@ -2,11 +2,16 @@ package com.example.contentprovider
 
 import android.content.ContentProvider
 import android.content.ContentValues
+import android.content.Context
 import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import com.example.contentprovider.data.CONTENT_ITEM_COLUMN
 import com.example.contentprovider.data.ContentData
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
 
 const val CONTENT_TABLE = CONTENT_ITEM_COLUMN
 const val AUTHORITY = "com.example.contentprovider.provider"
@@ -14,8 +19,10 @@ const val CONTENT_DATA_CODE = 1
 
 class mContentProvider : ContentProvider() {
     private lateinit var contentData : ContentData
+    private lateinit var appContext: Context
     override fun onCreate(): Boolean {
-        contentData = ContentData()
+        appContext = context?.applicationContext ?: throw IllegalStateException()
+        contentData = getContentData(appContext)
         return true
     }
 
@@ -23,6 +30,19 @@ class mContentProvider : ContentProvider() {
         addURI(AUTHORITY, CONTENT_TABLE, CONTENT_DATA_CODE)
     }
 
+    @InstallIn(SingletonComponent::class)
+    @EntryPoint
+    interface ContentDataProviderEntryPoint{
+        fun getData() : ContentData
+    }
+
+    private fun getContentData(appContext : Context):ContentData{
+        val hiltEntryPoint = EntryPointAccessors.fromApplication(
+            appContext,
+            ContentDataProviderEntryPoint::class.java
+        )
+        return hiltEntryPoint.getData()
+    }
 
     override fun query(
         p0: Uri,
@@ -33,7 +53,6 @@ class mContentProvider : ContentProvider() {
     ): Cursor? {
         val resultCode : Int = matcher.match(p0)
         return if (resultCode == CONTENT_DATA_CODE){
-            val appContext = context?.applicationContext ?: throw IllegalStateException()
 
             val cursor : Cursor? =  if (resultCode == CONTENT_DATA_CODE){
                 contentData.getContentList()

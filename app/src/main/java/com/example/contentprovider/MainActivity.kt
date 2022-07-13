@@ -21,8 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.contentprovider.data.CONTENT_ITEM_COLUMN
 import com.example.contentprovider.ui.theme.ContentProviderTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     @SuppressLint("Range")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
