@@ -16,6 +16,8 @@ import dagger.hilt.components.SingletonComponent
 const val CONTENT_TABLE = CONTENT_ITEM_COLUMN
 const val AUTHORITY = "com.example.contentprovider.provider"
 const val CONTENT_DATA_CODE = 1
+const val uri = "content://$AUTHORITY/$CONTENT_ITEM_COLUMN"
+val CONTENT_URI: Uri = Uri.parse(uri)
 
 class mContentProvider : ContentProvider() {
     private lateinit var contentData : ContentData
@@ -66,11 +68,19 @@ class mContentProvider : ContentProvider() {
         }
     }
 
-    override fun getType(p0: Uri): String? {
-        throw UnsupportedOperationException("Only reading operations are allowed")
+    override fun getType(p0: Uri): String {
+        return when (matcher.match(p0)) {
+            CONTENT_DATA_CODE -> "vnd.android.cursor.dir/users"
+            else -> throw java.lang.IllegalArgumentException("Unsupported URI: $uri")
+        }
     }
 
     override fun insert(p0: Uri, p1: ContentValues?): Uri? {
+        val status = contentData.saveContent(p1)
+        if (status){
+            context?.contentResolver?.notifyChange(CONTENT_URI,null)
+            return CONTENT_URI
+        }
         throw UnsupportedOperationException("Only reading operations are allowed")
     }
 
