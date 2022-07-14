@@ -99,6 +99,14 @@ class mContentProvider : ContentProvider() {
     }
 
     override fun update(p0: Uri, p1: ContentValues?, p2: String?, p3: Array<out String>?): Int {
-        throw UnsupportedOperationException("Only reading operations are allowed")
+        val count: Int
+        when(matcher.match(p0)){
+            CONTENT_DATA_CODE -> {
+                count = if (contentData.updateContent(p1,p3)) 1 else 0   // we have only one column so no need to use selection
+            }
+            else ->throw UnsupportedOperationException("Only reading operations are allowed")
+        }
+        context?.contentResolver?.notifyChange(CONTENT_URI,null)
+        return count
     }
 }

@@ -30,6 +30,23 @@ class ContentData {
         return if (arg!= null){contentList.removeAll(arg)} else false // we have only one column so no need to use selection
     }
 
+    fun updateContent(content: ContentValues?,arg: Array<out String>?):Boolean{
+        return if (arg != null && content != null){
+            var status = false
+            for (i in arg){
+                if(contentList.contains(i)){
+                    contentList[contentList.indexOf(i)] = content.get(CONTENT_ITEM_COLUMN) as String
+                    status = true
+                }else{
+                    status= false
+                }
+            }
+            status
+        }else{
+            false
+        }
+    }
+
     init {
         for (i in 0..5){
             contentList.add("content $i")

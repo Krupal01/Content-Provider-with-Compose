@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -95,6 +96,17 @@ class MainActivity : ComponentActivity() {
                                         Toast.makeText(applicationContext,if(code==1)"Delete Success,Load Again" else "Delete Fail , Retry",Toast.LENGTH_LONG).show()
                                     }) {
                                         Icon(imageVector = Icons.Default.Delete, contentDescription ="Delete" )
+                                    }
+
+                                    IconButton(onClick = {
+                                        val contentValue = ContentValues().also {
+                                            it.put(CONTENT_ITEM_COLUMN,"content updated")
+                                        }
+                                        val code = contentResolver.update(CONTENT_URI, contentValue,CONTENT_ITEM_COLUMN, arrayOf(item)).let {
+                                            Toast.makeText(applicationContext,if(it==1)"Update Success,Load Again" else "Update Fail , Retry",Toast.LENGTH_LONG).show()
+                                        }
+                                    }) {
+                                        Icon(imageVector = Icons.Default.Edit, contentDescription ="Edit" )
                                     }
 
                                 }
